@@ -13,7 +13,7 @@ def main(req: func.HttpRequest, outputQueueItem: func.Out[func.QueueMessage]) ->
 
     # Blob Storage- Upload
 
-    conn_str = f'DefaultEndpointsProtocol=https;AccountName=azurestorageacc86;AccountKey=11IZkcgITC4oqNdUo8s82C9/xl49ugXJA97XsXgmDyYaaDNs76ucNr8elfk1HzCUv9nxCtXVSv39rZZuF8W7Ug==;EndpointSuffix=core.windows.net'
+    conn_str = os.environ['azurestorageacc86_STORAGE']
     blob_service_client = BlobServiceClient.from_connection_string(
         conn_str=conn_str)
     logging.info(os.path.abspath)
@@ -24,26 +24,25 @@ def main(req: func.HttpRequest, outputQueueItem: func.Out[func.QueueMessage]) ->
 
 
     # Blob Storage- Download
-    blob_client = blob_service_client.get_blob_client(container='imagecon', blob='index.png')
+    '''blob_client = blob_service_client.get_blob_client(container='imagecon', blob='index.png')
     with open('index.png', 'wb') as my_blob:
         my_blob.writelines([blob_client.download_blob().readall()])
-        my_blob.close()
+        my_blob.close()'''
 
 
     # Cosmos DB
 
-    '''uri = "mongodb://azurecosmosdbacc86:LbZMRoslYgqLVQ3WuaDXRyLFJ7IncY0uLHjUPmNS5VoOVvK9V5wBgkMJIIROsJWEIwCOnS6qJssmGm7bs57yxA==@azurecosmosdbacc86.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@azurecosmosdbacc86@"
+    uri = os.environ['mongo_COSMOSDB']
     client = pymongo.MongoClient(uri, retryWrites=False)
     db = client['demodb']
     collection = db['con1']
     record = {
         "author": "Joe",
         "text": "My first blog post!",
-        "tags": ["mongodb", "python", "pymongo"],
-        "date": datetime.datetime.utcnow()
+        "tags": ["mongodb", "python", "azure"],
     }
     id = collection.insert_one(record)
-    logging.info(f'Created ID {id}')'''
+    logging.info(f'Created ID {id}')
 
     name = req.params.get('name')
     if not name:
